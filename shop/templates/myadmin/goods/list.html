@@ -1,0 +1,131 @@
+{% extends 'myadmin/index.html' %}
+
+{% block cont %}
+<div class="row-content am-cf">
+    <div class="row">
+        <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+            <div class="widget am-cf">
+                <div class="widget-head am-cf">
+                    <div class="widget-title  am-cf">文章列表</div>
+
+
+                </div>
+                <div class="widget-body  am-fr">
+
+                    <div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+                        <div class="am-form-group">
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <a href="{% url 'myadmin_addgoods' %}" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus"></span> 新增</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form action="">
+                        <div class="am-u-sm-12 am-u-md-6 am-u-lg-3">
+                            <div class="am-form-group tpl-table-list-select">
+                                <select name="type" data-am-selected="{btnSize: 'sm'}" style="display: none;">
+                                    <option {% if request.GET.type == 'all' %}selected {% endif %} value="all">模糊搜索</option>
+                                  
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+                            <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                <input type="text" value="{{request.GET.search}}" name="search" class="am-form-field ">
+                                <span class="am-input-group-btn">
+                                    <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search"></button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="am-u-sm-12">
+                        <table width="100%" class="am-table am-table-compact am-table-striped tpl-table-black " id="exam12ple-r">
+                            <thead>
+                                <tr>
+                                    <td>ID</td>
+                                    <th>头像</th>
+                                    <th>商品名</th>
+                                    <th>价格</th>
+                                    <th>数量</th>
+                                    <th>类别</th>
+                                    <th>状态</th>
+                                    <th>添加时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in goods %}
+                                <tr class="gradeX">
+                                    <td>{{i.id}}</td>
+                                    <td><img src="{{i.g_url}}" width="50"></td>
+                                    <td>{{i.title}}</td>
+                                    <td>{{i.price}}</td>
+                                    
+                                    <td>{{i.ordernum}}</td>
+                                    <td>{{i.cateid.name}}</td>
+                                    <td>{{i.status}}</td>
+                                    <td>{{i.addtime}}</td>
+                                    <td>
+                                        <div class="tpl-table-black-operation">
+                                            <a href="{% url 'myadmin_editgoods' %}?uid={{i.id}}">
+                                                <i class="am-icon-pencil"></i> 编辑
+                                            </a>
+                                            <a href="{% url 'myadmin_delgoods' %}?uid={{i.id}}" class="tpl-table-black-operation-del">
+                                                <i class="am-icon-trash"></i> 删除
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                <!-- more data -->
+                            </tbody>
+                            <script type="text/javascript">
+                                // 重置密码
+                                $('.changepwd').click(function(){
+                                    // 获uid
+                                    var uid=$(this).attr('uid')
+                                    console.log(uid)
+                                    // 放ajax请求 重置密码
+                                    $.get('{% url 'myadmin_respwd' %}',{uid:uid},function(data){
+                                        alert(data.msg)
+                                    },'json')
+                                })
+                                // 修改状态
+                                $('.changes').change(function(){
+                                    // 获取用户id
+                                    var uid = $(this).attr('uid')
+                                    // 获取value值
+                                    var val = $(this).val()
+                                    // 发送ajax
+                                    $.get('{% url 'myadmin_changes' %}',{uid:uid,status:val},function(data){
+                                        alert(data.msg)
+                                    },'json')
+                                })
+                            </script>
+                        </table>
+                    </div>
+                    <div class="am-u-lg-12 am-cf">
+
+                        <div class="am-fr">
+                            <ul class="am-pagination tpl-pagination">
+                                <li ><a href="{% url 'myadmin_goodslist' %}?p=1&type={{request.GET.type}}&search={{request.GET.search}}">首页</a></li>
+
+                                <li {% if page == 1 %} class="am-disabled" {% endif %}><a href="{% url 'myadmin_goodslist' %}?p={{page|add:-1}}&type={{request.GET.type}}&search={{request.GET.search}}">«</a></li>
+                                {% for i in prange %}
+                                <li {% if page == i %} class="am-active" {% endif %}><a href="{% url 'myadmin_goodslist' %}?p={{i}}&type={{request.GET.type}}&search={{request.GET.search}}">{{i}}</a></li>
+                                {% endfor %}
+                                <li {% if page == sumpage %} class="am-disabled" {% endif %}><a href="{% url 'myadmin_goodslist' %}?p={{page|add:1}}&type={{request.GET.type}}&search={{request.GET.search}}">»</a></li>
+
+                                <li ><a href="{% url 'myadmin_goodslist' %}?p={{sumpage}}&type={{request.GET.type}}&search={{request.GET.search}}">尾页</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
